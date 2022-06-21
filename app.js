@@ -27,10 +27,14 @@ app.get('/', (req, res) => {
     res.render('home.ejs');
 })
 
-app.get('/makecampground', async (req, res) => {
-    const camp = new Campground({title: 'My Backgard', description: 'cheap camping!'});
-    await camp.save()
-    res.send(camp);
+app.get('/campgrounds', async (req, res) => {
+    const campgrounds = await Campground.find({});
+    res.render('campgrounds/index.ejs', {campgrounds})
+})
+
+app.get('/campgrounds/:id', async (req, res) => {
+    const campground = await Campground.findById(req.params.id)
+    res.render('campgrounds/show.ejs', {campground});
 })
 
 app.listen(3000, () => {
