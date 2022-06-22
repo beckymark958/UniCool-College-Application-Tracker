@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const Campground = require('./models/campground');
-const { request } = require('http');
+const methodOverride = require('method-override');
 
 // Setup mongodb
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {       
@@ -21,6 +21,9 @@ db.once("open", () => {
 // Setup views
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Setup Method-Override
+app.use(methodOverride('_method'));
 
 // is a method(bodyParser) inbuilt in express to recognize the incoming Request Object as strings or arrays.
 app.use(express.urlencoded({extended: true}))  // extended: true if nested content is allowed
@@ -53,6 +56,22 @@ app.get('/campgrounds/:id', async (req, res) => {
     res.render('campgrounds/show.ejs', {campground});
 })
 
+app.get('/campgrounds/:id/edit', async (req, res) => {
+    const campground = await Campground.findById(req.params.id)
+    res.render('campgrounds/edit.ejs', {campground});
+})
+
+app.put('/campgrounds/:id', async (req, res) => {
+    const {id} = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    res.redirect(`/campgrounds/${campground._id}`)
+})
+
+app.delete('/campgrounds/:id', async (req, res) => {
+    const {id} = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect('/campgrounds');
+})
 
 
 app.listen(8080, () => {
