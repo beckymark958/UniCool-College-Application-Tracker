@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
 
@@ -24,6 +25,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Setup Method-Override
 app.use(methodOverride('_method'));
+
+// Setup Ejs-mate
+app.engine('ejs', ejsMate);
 
 // is a method(bodyParser) inbuilt in express to recognize the incoming Request Object as strings or arrays.
 app.use(express.urlencoded({extended: true}))  // extended: true if nested content is allowed
