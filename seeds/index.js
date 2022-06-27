@@ -30,7 +30,7 @@ const seedDB = async() => {
             title: `${sample(descriptors)} ${sample(places)}`,
             image:"https://source.unsplash.com/collection/429524",
             description: "test text over here. Camping is wonderful. Yay!",
-            price
+            price:price
         })
         await camp.save();
     }
