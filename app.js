@@ -61,14 +61,6 @@ const sessionConfig = {
 
 app.use(session(sessionConfig))
 
-// setup flash
-app.use(flash());
-
-app.use((req, res, next) => {
-  res.locals.success = req.flash('success');
-  res.locals.error = req.flash('error');
-  next();
-})
 
 // setup passport
 app.use(passport.initialize());
@@ -78,6 +70,15 @@ passport.use(new LocalStrategy(User.authenticate()));  // specify authentication
 passport.serializeUser(User.serializeUser())          //  how do we store user in the session
 passport.deserializeUser(User.deserializeUser())      //  how do we unstore user in the session
 
+// setup flash
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+})
 
 
 app.use('/campgrounds', campgroundRoutes);
