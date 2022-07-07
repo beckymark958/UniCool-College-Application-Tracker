@@ -13,7 +13,7 @@ router.post('/register', catchAsync(async(req, res, next) => {
         const { email, username, password } = req.body;
         const user = new User({ email, username });
         const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err => {     // this functino still requires a callback. Cannot use "await"
+        req.login(registeredUser, err => {     // this function still requires a callback. Cannot use "await"
             if(err) return next(err);
             req.flash('success', 'Welcome to Yelp Camp!');
             res.redirect('/campgrounds');
