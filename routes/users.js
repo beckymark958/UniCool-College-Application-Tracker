@@ -8,17 +8,16 @@ const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const users = require('../controllers/users.js');
 
-/* 
-|| Functions || 
-*/
 
 // Register
-router.get('/register', users.renderRegister);
-router.post('/register', catchAsync(users.register));
+router.route('/register')
+    .get(users.renderRegister)
+    .post(catchAsync(users.register));
 
 // Login
-router.get('/login', users.renderLogin);
-router.post('/login', passport.authenticate('local', {failureFlash: true, failureRedirect:'/login'}), users.login)
+router.route('/login')
+    .get(users.renderLogin)
+    .post(passport.authenticate('local', {failureFlash: true, failureRedirect:'/login'}), users.login);
 
 // Logout
 router.get('/logout', users.logout);
