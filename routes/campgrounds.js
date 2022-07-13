@@ -6,12 +6,17 @@ const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const Campground = require('../models/campground.js');
+const multer = require('multer')
 
 // import middleware
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 
 // import controllers
-const campgrounds = require('../controllers/campgrounds.js')
+const campgrounds = require('../controllers/campgrounds.js');
+
+// apply multer to help storage our pictures
+const { storage } = require('../cloudinary');  // it will automatically look for index file
+const upload = multer({ storage });
 
 /* 
 || Functions || 
@@ -20,7 +25,7 @@ Create, Update, Revise and Delete campgrounds
 
 router.route('/')
     .get(catchAsync(campgrounds.index)) // View all campgrounds (index)
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+    .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground));   // 'image' is the name of the input field
     
 router.get('/new', isLoggedIn, campgrounds.renderNewForm); // Noted: the order matters! If it places behind the next one, it will treat 'new' as the 'id'
 

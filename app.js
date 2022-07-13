@@ -1,3 +1,8 @@
+// Require env packages when we are in development mode, not production mode
+if (process.nev_NODE_ENV !== "production") {
+  require('dotenv').config();
+}
+
 // Require packages
 const express = require('express');
 const path = require('path');
@@ -9,6 +14,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+
 
 // Acquire models
 const User = require('./models/user.js');
