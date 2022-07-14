@@ -3,14 +3,18 @@ const Review = require('./review');
 
 const Schema = mongoose.Schema;
 
+const ImageSchema = new Schema({   // we do this because the virtual property can only apply on Schema. It cannot be added on images in the CampgroundSchema.
+    url: String,
+    filename: String
+})
+
+ImageSchema.virtual('thumbnail').get(function() {          // Use virtual property because we do not want to store this derived info
+    return this.url.replace('/upload', '/upload/w_200');
+})
+
 const CampgroundSchema = new Schema({
     title: String,
-    images: [
-        {
-            url: String,
-            filename: String
-        }
-    ],
+    images: [ImageSchema],
     price: Number,
     description: String,
     location: String,
