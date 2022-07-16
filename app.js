@@ -14,6 +14,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const mongoSanitize = require('express-mongo-sanitize');   // Sanitizes inputs against query selector injection attacks
 
 
 // Acquire models
@@ -53,13 +54,17 @@ app.use(express.urlencoded({extended: true}))  // extended: true if nested conte
 
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.use(mongoSanitize())
+
 // setup Session Configuration
 const sessionConfig = {
+    name: 'session',                     // name of the cookie
     secret: 'thisshouldbeabettersecret!',
     resave: false,
     saveUninitialized: true,
     cookie: {
-      httpOnly: true,
+      httpOnly: true,            // cookies are only accessible in HTTP
+    //   secure: true,              // can only access with HTTPs
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
       maxAge: 1000 * 60 * 60 * 24 * 7
     }
