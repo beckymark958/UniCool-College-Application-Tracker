@@ -15,6 +15,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongoSanitize = require('express-mongo-sanitize');   // Sanitizes inputs against query selector injection attacks
+const helmet = require('helmet');
 
 
 // Acquire models
@@ -70,8 +71,63 @@ const sessionConfig = {
     }
 }
 
-app.use(session(sessionConfig))
+app.use(session(sessionConfig));
 
+// setup helmet
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://kit.fontawesome.com",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+    "https://res.cloudinary.com/beckyyu/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com",
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.mapbox.com",
+    "https://api.tiles.mapbox.com",
+    "https://fonts.googleapis.com",
+    "https://use.fontawesome.com",
+    "https://cdn.jsdelivr.net",
+    "https://res.cloudinary.com/beckyyu/"
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com",
+    "https://*.tiles.mapbox.com",
+    "https://events.mapbox.com",
+    "https://res.cloudinary.com/beckyyu/"
+];
+const fontSrcUrls = ["https://res.cloudinary.com/beckyyu/"];
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives : {
+                defaultSrc : [],
+                connectSrc : [ "'self'", ...connectSrcUrls ],
+                scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+                styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+                workerSrc  : [ "'self'", "blob:" ],
+                objectSrc  : [],
+                imgSrc     : [
+                    "'self'",
+                    "blob:",
+                    "data:",
+                    "https://res.cloudinary.com/beckyyu/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                    "https://images.unsplash.com/"
+                ],
+                fontSrc    : [ "'self'", ...fontSrcUrls ],
+                mediaSrc   : [ "https://res.cloudinary.com/dlzez5yga/" ],
+                childSrc   : [ "blob:" ],
+                'script-src-attr': null
+            }
+        },
+        crossOriginEmbedderPolicy: false
+    })
+);
 
 // setup passport
 app.use(passport.initialize());
